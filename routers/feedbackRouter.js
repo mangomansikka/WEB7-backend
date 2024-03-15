@@ -19,7 +19,7 @@ router.use(checkAuth);
 router.get('/', getAllFeedback);
 
 // ADD a new feedback
-router.post('/',  addFeedback);
+router.post('/:email',  addFeedback);
 
 // GET a feedback by ID
 router.get('/:id', getFeedbackById);

@@ -16,13 +16,15 @@
   // POST a new feedback
   const addFeedback = async (req, res) => {
     const { sender, message, rating } = req.body;
+    const { email } = req.params;
+    console.log("email:", email);
 
     if (!sender || !message || !rating) {
       return res.status(400).json({ message: 'All fields are required' });
     };
 
     try {
-        const feedback = new Feedback({ sender, message, rating });
+        const feedback = new Feedback({ sender, message, rating, email });
         await feedback.save();
         res.status(201).json(feedback);
     } catch (error) {

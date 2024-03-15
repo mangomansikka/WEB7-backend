@@ -34,14 +34,16 @@ beforeAll(async () => {
     await Feedback.deleteMany({});
     const user = await api.post("/api/user/signup").send(testUser);
     token = user.body.token;
+    emailu = user.body.email;
 });
 
 describe("test feedback api routes", () => {
     describe("After a user is signed up", () => {
         beforeEach(async () => {
-            // const sender = testUser.username;
+            const email = testUser.email;
+            url = "/api/feedback/" + email;
             await Feedback.deleteMany({});
-            await api.post("/api/feedback").set("Authorization", `Bearer ${token}`).send(testFeedbacks[0]);
+            await api.post(url).set("Authorization", `Bearer ${token}`).send(testFeedbacks[0]);
         });
     
         // GET all feedback
@@ -51,20 +53,26 @@ describe("test feedback api routes", () => {
 
         // POST a new feedback
         it("should create a new feedback", async () => {
+            const emailu = testUser.email;
+            url = "/api/feedback/" + emailu;
+            console.log("url:", url)
             const newFeedback = {
                 sender: "alice",
                 message: "testMessage",
                 rating: 5,
+                email: emailu
             };
-            await api.post("/api/feedback").set("Authorization", `Bearer ${token}`).send(newFeedback).expect(201).expect("Content-Type", /application\/json/);
+            await api.post(url).set("Authorization", `Bearer ${token}`).send(newFeedback).expect(201).expect("Content-Type", /application\/json/);
         });
 
+        
         // GET feedback by ID
         it("should return one feedback by its id", async () => {
             const feedback = await Feedback.findOne();
             const id = feedback._id;
             await api.get(`/api/feedback/${id}`).set("Authorization", `Bearer ${token}`).expect(200).expect("Content-Type", /application\/json/);
-        }); 
+        });
+        
 
         // DELETE a feedback
         it("should delete a feedback by its id", async () => {
